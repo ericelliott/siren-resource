@@ -1,0 +1,34 @@
+{
+  "name": "siren-resource",
+  "version": "0.0.0",
+  "description": "Resourceful routing with siren+json hypermedia for Express.",
+  "main": "siren-resource.js",
+  "dependencies": {
+    "express": "~3.4.2",
+    "mout": "~0.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dilvie/siren-resource.git"
+  },
+  "keywords": [
+    "siren",
+    "json",
+    "resourceful",
+    "express",
+    "resource",
+    "router",
+    "hypermedia",
+    "RESTful",
+    "REST"
+  ],
+  "author": "Eric Elliott",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dilvie/siren-resource/issues"
+  }
+}
