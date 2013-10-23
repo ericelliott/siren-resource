@@ -33,7 +33,7 @@ Creates a bunch of routes for you automatically, based on resources, and maps th
       handler(path, 'delete', options) );
 ```
 
-It also automatically sets content type to siren+json, and makes provides a super easy `.entity()` function to help you encode your responses so that they conform to the spec.
+It also automatically sets content type to siren+json, and provides a super easy `.entity()` function to help you encode your responses so that they conform to the spec.
 
 
 ## Usage
