@@ -7,7 +7,36 @@ Resourceful routing with siren+json hypermedia for Express.
 
 Here be dragons.
 
-Here's how you use it:
+## What it does
+
+Creates a bunch of routes for you automatically, based on resources, and maps them to actions. Here's the mapping, right from the source:
+
+```js
+    // GET /resource -> index
+    app.get( path,
+      handler(path, 'index', options) );
+
+    // POST /resource -> create
+    app.post( path, 
+      handler(path, 'create', options) );
+
+    // GET /resource/:id -> show
+    app.get( path + '/:id',
+      handler(path, 'show', options) );
+
+    // PUT /resource/:id -> update / append
+    app.put( path + '/:id',
+      handler(path, 'put', options) );
+
+    // DELETE /resource -> delete
+    app.delete( path + '/:id',
+      handler(path, 'delete', options) );
+```
+
+It also automatically sets content type to siren+json, and makes provides a super easy `.entity()` function to help you encode your responses so that they conform to the spec.
+
+
+## Usage
 
 ```js
 var resource = require('siren-resource'),
