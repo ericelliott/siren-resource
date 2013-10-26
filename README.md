@@ -104,7 +104,7 @@ Here's what the output looks like:
 
 Note that it also hooks up lots of other routes, defaulting to 404 and 401 error handling for undefined routes. It also handles paging automatically... just pass paging rules in on the options, and it will automatically create prev / next links that look like:
 
-`/resource/offset/20/limit/10`
+`/resource?offset=20&limit=10`
 
 
 ## Credits
