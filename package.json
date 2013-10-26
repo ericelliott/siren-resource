@@ -1,13 +1,16 @@
 {
   "name": "siren-resource",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Resourceful routing with siren+json hypermedia for Express.",
   "main": "siren-resource.js",
   "dependencies": {
     "express": "~3.4.2",
     "mout": "~0.7.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.7.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

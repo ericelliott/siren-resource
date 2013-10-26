@@ -1,120 +1,21 @@
 'use strict';
 
-var format = require('util').format,
+var 
   statusCodes = require('http').STATUS_CODES,
-  values = require('mout/object/values'),
-  compact = require('mout/array/compact'),
-
-  link = function link(rel, href) {
-    var lnk = {};
-
-    if (!href) {
-      return undefined;
-    }
-
-    if (rel) {
-      lnk.rel = Array.isArray(rel) ?
-        rel : [rel];
-    }
-
-    lnk.href = href;
-
-    return lnk;
-  },
-
-  pageLink = function
-      pageLink(uri, rel, offset, limit) {
-
-    var template = '/offset/%s/limit/%s';
-
-    return link(rel, uri +
-        format(template, offset, limit));
-  },
-
-  /**
-   * Take uri, collection length, paging options
-   * and return previous and next links.
-   *
-   * @param  {string} uri
-   *         Resource base URI
-   * 
-   * @param  {number} length
-   *         The length of the collection
-   *
-   * @param  {object} options
-   *
-   * @return {array}
-   *         Siren links collection
-   */
-  pageLinks = function (uri, length, options) {
-    var offset = options.offset,
-    limit = options.limit,
-    prevOffset, nextOffset;
-
-    if (limit && offset) {
-      prevOffset =
-        ((offset - limit) >= 0) ?
-          offset - limit : 0;
-      nextOffset = 
-        ((offset + limit) <= length) ?
-          offset + limit : false;
-
-      return [
-        pageLink(uri, 'prev', prevOffset, limit),
-        pageLink(uri, 'next', nextOffset, limit)
-      ];
-    }
-  },
-
-  /**
-   * Take href and options, and return a valid
-   * Siren object, complete with automatic
-   * navigation links (self, prev, next).
-   * 
-   * @param  {[type]} href    [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   */
-  entity = function entity (href, options) {
-    var links = options.links || [],
-      length = options.entities ?
-        options.entities.length : 0,
-      navLinks = pageLinks(href, length, options),
-      entities = options.entities,
-      sclass = options.class,
-      selfLink = href ? { 
-          rel: ['self'],
-          href: href
-        } : [];
-
-    links =
-      compact( links.concat(navLinks, selfLink) );
-
-    return {
-      title: options.title,
-      class: !sclass ? undefined :
-        Array.isArray(sclass) ?
-          sclass : [sclass],
-      properties: options.properties,
-      entityAttributes: options.entityAttributes,
-      entities: entities ?
-        Array.isArray(entities) ?
-          entities : values(entities) :
-        undefined,
-      actions: options.actions,
-      links: links.length ? links : undefined
-    };
-  },
+  mixIn = require('mout/object/mixIn'),
+  link = require('./lib/links.js').link,
+  entity = require('./lib/entity.js'),
+  adapters = require('./adapters'),
 
   sirenError = 
       function sirenError(status, options) {
     return entity('', {
       class: 'error',
-      properties: {
+      properties: mixIn({
         status: status,
         message: options.message ||
           statusCodes[status]
-      },
+      }, options.properties),
       links: options.links
     });
   },
@@ -133,14 +34,13 @@ var format = require('util').format,
   handler = function
       handler(path, action, options) {
     return function (req, res, next) {
-      var routes = options.routes || {},
+      var routes = options.routes || options,
         route = routes[action];
 
       if (typeof route === 'function') {
         res.setHeader('Content-Type',
           'application/vnd.siren+json');
-
-        return route(req, res, next);
+        return route.call(options, req, res, next);
       }
 
       send(res, sirenError(404, {
@@ -160,15 +60,17 @@ var format = require('util').format,
     }, badMethod));
   },
 
-  router = function router(path, app, options) {
+  router = function router(path, app, collection) {
+
+    collection.settings.href = path;
 
     // GET /resource -> index
     app.get( path,
-      handler(path, 'index', options) );
+      handler(path, 'index', collection) );
 
     // POST /resource -> create
     app.post( path, 
-      handler(path, 'create', options) );
+      handler(path, 'create', collection) );
 
     app.options(path, function (req, res) {
       var sobj = entity(path, {
@@ -186,15 +88,15 @@ var format = require('util').format,
 
     // GET /resource/:id -> show
     app.get( path + '/:id',
-      handler(path, 'show', options) );
+      handler(path, 'show', collection) );
 
     // PUT /resource/:id -> update / append
     app.put( path + '/:id',
-      handler(path, 'put', options) );
+      handler(path, 'put', collection) );
 
     // DELETE /resource -> delete
     app.delete( path + '/:id',
-      handler(path, 'delete', options) );
+      handler(path, 'delete', collection) );
 
     app.all( path + '/:id', function (req, res) {
       error405(path, res);
@@ -203,5 +105,6 @@ var format = require('util').format,
 
   router.entity = entity;
   router.link = link;
+  router.adapters = adapters;
 
 module.exports = router;
