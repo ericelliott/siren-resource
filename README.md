@@ -102,6 +102,27 @@ Here's what the output looks like:
 ```js
 {
   "title": "Albums",
+  "properties": {
+    "description": "Some great albums you should listen to.",
+    "entityCount": 1
+  },
+  "entities": [
+    {
+      "id": "chmzq50np0002gfixtr1qp64o",
+      "name": "Settle",
+      "artist": "Disclosure",
+      "artistId": "chmzq4l480001gfixe8a3nzhm",
+      "coverImage": "/covers/medium/zrms5gxr.jpg",
+      "year": "2013",
+      "genres": [
+        "electronic",
+        "house",
+        "garage",
+        "UK garage",
+        "future garage"
+      ]
+    }
+  ],
   "entityAttributes": {
     "rel": [
       "item"
@@ -110,15 +131,6 @@ Here's what the output looks like:
       "album"
     ]
   },
-  "entities": [
-    {
-      "href": "/albums/chmzq50np0002gfixtr1qp64o",
-      "properties": {
-        "name": "Settle",
-        "artist": "Disclosure"
-      }
-    }
-  ],
   "links": [
     {
       "rel": [
