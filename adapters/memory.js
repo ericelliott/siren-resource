@@ -62,6 +62,7 @@ methods.index = function index(req, res) {
 
   res.send(entity(this.settings.href, {
     title: this.settings.title,
+    description: this.settings.description,
     length: this.models,
     req: req,
     entityAttributes: {
