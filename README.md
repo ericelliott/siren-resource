@@ -39,33 +39,61 @@ It also automatically sets content type to siren+json, and provides a super easy
 ## Usage
 
 ```js
-var resource = require('siren-resource'),
-  index = function index(req, res, next) {
-    var href = '/albums',
-      idx = map(albums, function (album) {
-        return {
-          href: href + '/' + album.id,
-          properties: {
-            name: album.name,
-            artist: album.artist
-          }
-        };
-      }),
-      sobj = resource.entity(href, {
-        title: 'Albums',
-        entityAttributes: {
-          rel: ['item'],
-          class: ['album']
-        },
-        entities: idx
-      });
-    res.send(sobj);
-  };
+'use strict';
 
-resource('/albums', app, {
-  routes: {
-    index: index
-  }
+var express = require('express'),
+  http = require('http'),
+  resource = require('siren-resource'),
+
+  collection = resource.adapters.memory,  
+  app = express(),
+  server,
+  port = 3000,
+
+  // Collections are the database abstraction layer
+  // that backs your resources. You can initialize
+  // them by passing in an array of models.
+  albums = collection({
+    models: [
+      {
+        "id": "chmzq50np0002gfixtr1qp64o",
+        "name": "Settle",
+        "artist": "Disclosure",
+        "artistId": "chmzq4l480001gfixe8a3nzhm",
+        "coverImage": "/covers/medium/zrms5gxr.jpg",
+        "year": "2013",
+        "genres": [
+          "electronic", "house", "garage", "UK garage",
+          "future garage"
+        ]
+      }
+    ],
+
+    // They also take some config....
+    config: {
+      title: 'Albums',
+      description: 'Some great albums you should ' +
+        'listen to.',
+      class: ['album']      
+    }
+  });
+
+app.use( express.json() );
+app.use( express.urlencoded() );
+app.use( express.methodOverride() );
+// app.use( log.requestLogger() );
+
+// Once you're ready, hook up your RESTful
+// routes by passing your collection into
+// the resource() function.
+resource('/albums', app, albums);
+
+// Create the server
+server = http.createServer(app);
+
+
+server.listen(port, function () {
+  console.log('Listening on port ' + port);
 });
 ```
 
@@ -102,7 +130,14 @@ Here's what the output looks like:
 }
 ```
 
-Note that it also hooks up lots of other routes, defaulting to 404 and 401 error handling for undefined routes. It also handles paging automatically... just pass paging rules in on the options, and it will automatically create prev / next links that look like:
+## Error messaging
+
+404 and 401 error handling routes get hooked up for you for unsupported methods and urls.
+
+## Paging
+
+Pass paging rules in on the options, and it will automatically create prev / next links that look like.
+Those links work automatically, too:
 
 `/resource?offset=20&limit=10`
 
