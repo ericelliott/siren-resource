@@ -28,7 +28,7 @@ app.get( path + '/:id',
 app.put( path + '/:id',
   handler(path, 'put', options) );
 
-// DELETE /resource -> delete
+// DELETE /resource/:id -> delete
 app.delete( path + '/:id',
   handler(path, 'delete', options) );
 ```
