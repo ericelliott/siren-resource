@@ -81,7 +81,7 @@ var express = require('express'),
   });
 
 app.use( bodyParser.json() );
-app.use( bodyParser.urlencoded() );
+app.use( bodyParser.urlencoded({extended: true}) );
 app.use( methodOverride() );
 // app.use( log.requestLogger() );
 
