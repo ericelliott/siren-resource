@@ -44,6 +44,8 @@ It also automatically sets content type to siren+json, and provides a super easy
 var express = require('express'),
   http = require('http'),
   resource = require('siren-resource'),
+  bodyParser = require('body-parser'),
+  methodOverride = require('method-override'),
 
   collection = resource.adapters.memory,  
   app = express(),
@@ -78,9 +80,9 @@ var express = require('express'),
     }
   });
 
-app.use( express.json() );
-app.use( express.urlencoded() );
-app.use( express.methodOverride() );
+app.use( bodyParser.json() );
+app.use( bodyParser.urlencoded() );
+app.use( methodOverride() );
 // app.use( log.requestLogger() );
 
 // Once you're ready, hook up your RESTful
