@@ -4,8 +4,10 @@
   "description": "Resourceful routing with siren+json hypermedia for Express.",
   "main": "siren-resource.js",
   "dependencies": {
-    "express": "~3.4.2",
-    "mout": "~0.7.1"
+    "cuid": "^1.2.4",
+    "dotty": "0.0.2",
+    "mout": "^0.7.1",
+    "stampit": "^1.1.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
