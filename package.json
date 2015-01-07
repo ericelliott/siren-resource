@@ -10,6 +10,7 @@
     "stampit": "^1.1.0"
   },
   "devDependencies": {
+    "express": "^4.0.0",
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.7.0"
   },
