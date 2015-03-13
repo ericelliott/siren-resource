@@ -9,6 +9,7 @@ var stampit = require('stampit'),
   map = require('mout/object/map'),
   findIndex = require('mout/array/findIndex'),
   mixIn = require('mout/object/mixIn'),
+  getVal = require('dotty').get,
   cuid = require('cuid'),
   entity = require('../lib/entity.js'),
   reserved = ['fields', 'q', 'filter', 'embed'],
@@ -24,13 +25,13 @@ var stampit = require('stampit'),
     }
   },
 
-  filterQuery = function filterQuery(query) {
+  filterQuery = function filterQuery (query) {
     return oFilter(query, function (val, key) {
       return !contains(reserved, key);
     });
   },
 
-  find = function find(models, query) {
+  find = function find (models, query) {
     var fields = filterQuery(query);
     return map(models, function (model) {
       return oFilter(model, function (obj, key) {
@@ -39,11 +40,11 @@ var stampit = require('stampit'),
     });
   };
 
-methods.filter = function filter(models, req) {
+methods.filter = function filter (models, req) {
   return find(models, req.query);
 };
 
-methods.index = function index(req, res) {
+methods.index = function index (req, res) {
   var items = [],
     offset, limit, max, i, models = this.models,
     query = req.query, entities;
@@ -54,32 +55,31 @@ methods.index = function index(req, res) {
   max = Math.min(offset + limit,
       models.length);
 
-  for (i = offset; i < max; i ++) {
+  for (i = offset; i < max; i++) {
     items.push(models[i]);
   }
 
   entities = methods.filter(items, query);
 
-  res.send(entity(this.settings.href, {
-    title: this.settings.title,
-    description: this.settings.description,
+  res.send(entity(getVal(this, 'settings.href'), {
+    title: getVal(this, 'settings.title'),
+    description: getVal(this, 'settings.description'),
     length: this.models,
     req: req,
     entityAttributes: {
-      rel: this.settings.rel,
-      class: this.settings.class
+      rel: getVal(this, 'settings.rel'),
+      'class': getVal(this, 'settings.class')
     },
     entities: entities
   }));
 };
 
-methods.create = function create(models, req,
-    cb) {
+methods.create = function create (models, req, cb) {
   var model = req.body,
     // TODO: Validate req.body against json-schema
-    idProperty = this.settings.idProperty,
-    slugProperty = this.settings.slugProperty,
-    hrefProperty = this.settings.hrefProperty,
+    idProperty = getVal(this, 'settings.idProperty'),
+    slugProperty = getVal(this, 'settings.slugProperty'),
+    hrefProperty = getVal(this, 'settings.hrefProperty'),
     id = cuid(),
     slug = slugProperty ? cuid.slug() : id,
     path = slug || id;
@@ -89,34 +89,33 @@ methods.create = function create(models, req,
   }
 
   model[idProperty] = id;
-  model[hrefProperty] = this.settings.href + path;
+  model[hrefProperty] = getVal(this, 'settings.href') + path;
   models.push(model);
   cb(null, model);
 };
 
-methods.getModelById = function
-    getModelById(models, req, cb) {
-  var queryObject = {},
-    idProperty = this.settings.idProperty;
-  queryObject[idProperty] = req.params.id;
+methods.getModelById = function getModelById (models, req, cb) {
+  var queryObject = {};
+    // idProperty = getVal(this, 'settings.idProperty');
+  // queryObject[idProperty] = req.params.id;
   cb(null, find(models, queryObject));
 };
 
-methods.show = function show(models, req, cb) {
+methods.show = function show (models, req, cb) {
   this.getModelById(models, req,
     function (model) {
       cb(null, model);
     });
 };
 
-methods.put = function put(models, req, cb) {
+methods.put = function put (models, req, cb) {
   var model = req.body;
   models.push(model);
   cb(null, model);
 };
 
-methods.delete = function del(models, req, cb) {
-  var prop = this.settings.idProperty,
+methods.delete = function del (models, req, cb) {
+  var prop = getVal(this, 'settings.idProperty'),
     id = req.body[prop],
     index = findIndex(models, function (model) {
       return model[prop] === id;
@@ -127,7 +126,7 @@ methods.delete = function del(models, req, cb) {
   cb(null);
 };
 
-module.exports = 
+module.exports =
   stampit().methods(methods).state(state)
   .enclose(function () {
     this.settings = mixIn({}, this.defaults,

@@ -1,16 +1,15 @@
 'use strict';
 
-var 
+var
   statusCodes = require('http').STATUS_CODES,
   mixIn = require('mout/object/mixIn'),
   link = require('./lib/links.js').link,
   entity = require('./lib/entity.js'),
   adapters = require('./adapters'),
 
-  sirenError = 
-      function sirenError(status, options) {
+  sirenError = function sirenError (status, options) {
     return entity('', {
-      class: 'error',
+      'class': 'error',
       properties: mixIn({
         status: status,
         message: options.message ||
@@ -20,7 +19,7 @@ var
     });
   },
 
-  send = function send(res, obj, status) {
+  send = function send (res, obj, status) {
     if (status) {
       res.statusCode = status;
     }
@@ -31,8 +30,7 @@ var
     res.send(obj);
   },
 
-  handler = function
-      handler(path, action, options) {
+  handler = function handler (path, action, options) {
     return function (req, res, next) {
       var routes = options.routes || options,
         route = routes[action];
@@ -51,7 +49,7 @@ var
     };
   },
 
-  error405 = function error405(path, res) {
+  error405 = function error405 (path, res) {
     var badMethod = 405;
     send(res, sirenError(405, {
       links: [
@@ -60,7 +58,7 @@ var
     }, badMethod));
   },
 
-  router = function router(path, app, collection) {
+  router = function router (path, app, collection) {
 
     collection.settings.href = path;
 
@@ -69,7 +67,7 @@ var
       handler(path, 'index', collection) );
 
     // POST /resource -> create
-    app.post( path, 
+    app.post( path,
       handler(path, 'create', collection) );
 
     app.options(path, function (req, res) {
@@ -103,8 +101,8 @@ var
     });
   };
 
-  router.entity = entity;
-  router.link = link;
-  router.adapters = adapters;
+router.entity = entity;
+router.link = link;
+router.adapters = adapters;
 
 module.exports = router;
