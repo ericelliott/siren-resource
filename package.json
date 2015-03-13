@@ -1,6 +1,6 @@
 {
   "name": "siren-resource",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Resourceful routing with siren+json hypermedia for Express.",
   "main": "siren-resource.js",
   "scripts": {
