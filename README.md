@@ -3,7 +3,7 @@ siren-resource
 
 Resourceful routing with siren+json hypermedia for Express.
 
-## Status - Developer Preview
+## Status: DEPRECATED - NO LONGER MAINTAINED - see [GraphQL](https://graphql.org/), instead
 
 Here be dragons.
 
